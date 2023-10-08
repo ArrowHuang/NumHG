@@ -66,20 +66,23 @@ def cal_rouge_score(target_path, predict_path):
 
 def cal_mover_score(target_path, predict_path):
     from moverscore_v2 import word_mover_score, get_idf_dict
-    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+    from collections import defaultdict
+
+    with open('stopwords.txt', 'r', encoding='utf-8') as f:
+        stop_words = set(f.read().strip().split(' '))
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "true"
     os.environ['MOVERSCORE_MODEL'] = "roberta-large"
     with open(predict_path) as pred, open(target_path) as target:
-        total_num, sentence_score = 0, 0
+        total_num, sentence_score = 0.0, 0.0
+        hyp_list, ref_list = [], []
         for (hyp, ref) in tqdm(zip(pred, target)):
-            hyp = [hyp.strip()]
-            ref = [ref.strip()]
-            idf_dict_hyp = get_idf_dict(hyp)
-            idf_dict_ref = get_idf_dict(ref)
-            
-            sentence_score += np.mean(word_mover_score(ref, hyp, idf_dict_ref, idf_dict_hyp, stop_words=[], n_gram=1, remove_subwords=True))
-            total_num += 1
-        mover_score = sentence_score / total_num
-        print("evaluation MoverScore: %.6f"%(mover_score))
+            ref_list.append(ref.strip())
+            hyp_list.append(hyp.strip())
+        idf_dict_hyp = get_idf_dict(hyp_list)
+        idf_dict_ref = get_idf_dict(ref_list)
+        mover_score = word_mover_score(ref_list, hyp_list, idf_dict_ref, idf_dict_hyp, stop_words, n_gram=1, remove_subwords=True)
+        print("evaluation MoverScore: %.6f"%(np.mean(mover_score)))
 
 
 def cal_bert_score(target_path, predict_path):
