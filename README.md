@@ -29,3 +29,16 @@ python numhg_eval.py \
 --num_gt_path=numeral_ground_truth_path \
 --num_type_path=numeral_type_path
 ```
+
+## How to Cite
+Please cite our paper if you use NumHG in your work.
+```sh
+@article{Huang2023NumHGAD,
+  title={NumHG: A Dataset for Number-Focused Headline Generation},
+  author={Jian-Tao Huang and Chung-Chi Chen and Hen-Hsen Huang and Hsin-Hsi Chen},
+  journal={ArXiv},
+  year={2023},
+  volume={abs/2309.01455},
+  url={https://api.semanticscholar.org/CorpusID:261530287}
+}
+```
